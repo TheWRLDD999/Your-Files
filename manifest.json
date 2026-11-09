@@ -1,0 +1,11 @@
+
+{
+  "name": "Your Files",
+  "short_name": "Your Files",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f6f8",
+  "theme_color": "#ffffff",
+  "description": "Your personal file manager",
+  "icons": []
+}
