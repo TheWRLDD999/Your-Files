@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "your-files-v1";
+const CACHE_NAME = "your-files-v2";
 
 self.addEventListener("install", event => {
   event.waitUntil(
@@ -7,7 +7,8 @@ self.addEventListener("install", event => {
       cache.addAll([
         "./",
         "./index.html",
-        "./manifest.json"
+        "./manifest.json",
+        "./icon.svg"
       ])
     )
   );
@@ -29,10 +30,9 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   if (event.request.method === "GET") {
     event.respondWith(
-      caches.match(event.request).then(
-        cached => cached || fetch(event.request)
+      caches.match(event.request).then(cached =>
+        cached || fetch(event.request)
       )
     );
   }
 });
-    
