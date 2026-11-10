@@ -3,109 +3,298 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <meta name="description" content="Your personal file manager">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Your Files">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <title>Your Files</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#f5f6f8;color:#20232a;font-family:Arial,sans-serif}
-header{background:white;padding:22px 18px;border-bottom:1px solid #e8e9ed}
-.logo{display:flex;align-items:center;gap:12px;font-size:21px;font-weight:700}
-.icon{width:43px;height:43px;border-radius:13px;background:#edf0f5;color:#26354a;display:grid;place-items:center;font-weight:800}
-main{max-width:750px;margin:auto;padding:20px 16px}
-button{border:0;border-radius:12px;padding:12px 16px;background:#26354a;color:white;font-size:14px;font-weight:600;cursor:pointer}
-button.secondary{background:white;color:#26354a;border:1px solid #e2e5eb}
-input{width:100%;padding:14px;border:1px solid #e2e5eb;border-radius:12px;background:white;font-size:15px;margin:16px 0}
-.actions{display:flex;gap:9px;flex-wrap:wrap}
-.card{background:white;border:1px solid #e9ebef;border-radius:16px;padding:16px;margin-top:15px}
+body{
+ margin:0;background:#f5f6f8;color:#20232a;
+ font-family:Arial,sans-serif;
+}
+header{
+ background:white;padding:17px 16px;
+ border-bottom:1px solid #e8e9ed;
+ position:sticky;top:0;z-index:5;
+}
+.logo{display:flex;align-items:center;gap:11px;font-size:21px;font-weight:700}
+.logo-icon{
+ width:42px;height:42px;border-radius:13px;
+ background:#26354a;color:white;display:grid;
+ place-items:center;font-weight:800;
+}
+main{max-width:850px;margin:auto;padding:18px 14px 35px}
+button{
+ border:0;border-radius:11px;padding:11px 14px;
+ background:#26354a;color:white;font-size:14px;
+ font-weight:600;cursor:pointer;
+}
+button.secondary{
+ background:white;color:#26354a;border:1px solid #e0e3e9;
+}
+button:active{opacity:.75}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.search{
+ width:100%;padding:14px;border:1px solid #e0e3e9;
+ border-radius:12px;background:white;font-size:15px;
+ margin:15px 0;
+}
+.card{
+ background:white;border:1px solid #e9ebef;
+ border-radius:16px;padding:15px;margin-top:14px;
+}
 h2{font-size:17px;margin:0 0 12px}
-.categories{display:flex;gap:8px;overflow:auto;margin:18px 0}
-.category{white-space:nowrap;background:white;color:#555;border:1px solid #e5e7eb}
+.meta{font-size:12px;color:#858b96;margin-top:5px}
+.categories{
+ display:flex;gap:8px;overflow-x:auto;
+ margin:17px 0;padding-bottom:3px;
+ scrollbar-width:thin;
+}
+.category{
+ white-space:nowrap;background:white;color:#555;
+ border:1px solid #e5e7eb;padding:10px 13px;
+}
 .category.active{background:#26354a;color:white}
-.file{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #eee}
-.file:last-child{border:0}
-.file-icon{width:43px;height:43px;background:#f0f2f5;border-radius:12px;display:grid;place-items:center;font-size:20px;flex:none}
+.library-heading{
+ display:flex;align-items:center;
+ justify-content:space-between;gap:10px;
+}
+.view-switch{display:flex;gap:5px}
+.view-switch button{padding:9px 11px}
+.view-switch button.active{background:#26354a;color:white}
+.view-switch button:not(.active){
+ background:#f1f2f5;color:#555;
+}
+.grid{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:9px;margin-top:12px;
+}
+.tile{
+ min-width:0;overflow:hidden;border:1px solid #eceef2;
+ border-radius:12px;background:white;
+}
+.thumb{
+ width:100%;aspect-ratio:1/1;background:#f0f2f5;
+ display:flex;align-items:center;justify-content:center;
+ overflow:hidden;position:relative;
+}
+.thumb img,.thumb video{
+ width:100%;height:100%;object-fit:cover;
+}
+.thumb-placeholder{font-size:30px;color:#8a91a0}
+.video-mark{
+ position:absolute;right:7px;bottom:7px;
+ background:#20232acc;color:white;border-radius:20px;
+ padding:5px 8px;font-size:12px;
+}
+.tile-info{padding:8px}
+.tile-name{
+ font-size:12px;font-weight:600;
+ overflow:hidden;text-overflow:ellipsis;
+ white-space:nowrap;
+}
+.tile-meta{font-size:10px;color:#8a909b;margin-top:4px}
+.tile-actions{display:flex;gap:5px;padding:0 7px 8px}
+.tile-actions button{flex:1;padding:7px 3px;font-size:11px}
+.list{margin-top:10px}
+.file-row{
+ display:flex;align-items:center;gap:10px;
+ padding:10px 0;border-bottom:1px solid #eee;
+}
+.file-row:last-child{border:0}
+.list-thumb{
+ width:58px;height:58px;flex:none;
+ border-radius:10px;background:#f0f2f5;
+ overflow:hidden;display:grid;place-items:center;
+ font-size:23px;color:#8a91a0;
+}
+.list-thumb img,.list-thumb video{
+ width:100%;height:100%;object-fit:cover;
+}
 .file-info{flex:1;min-width:0}
-.file-name{font-weight:600;overflow-wrap:anywhere}
-.meta{font-size:12px;color:#858b96;margin-top:4px}
-.file button{padding:9px 11px;font-size:12px}
-.empty{text-align:center;color:#858b96;padding:35px 10px}
-footer{font-size:12px;color:#9298a2;line-height:1.6;padding:25px 3px}
+.file-name{
+ font-weight:600;font-size:13px;
+ overflow-wrap:anywhere;
+}
+.file-actions{display:flex;gap:5px;flex-wrap:wrap}
+.file-actions button{padding:8px 9px;font-size:11px}
+.empty{text-align:center;color:#858b96;padding:38px 10px}
+footer{
+ font-size:12px;color:#9298a2;
+ line-height:1.6;padding:23px 3px;
+}
+.modal{
+ display:none;position:fixed;inset:0;z-index:20;
+ background:#000b;align-items:center;justify-content:center;
+ padding:16px;
+}
+.modal.show{display:flex}
+.modal-box{
+ width:100%;max-width:600px;max-height:90vh;
+ overflow:auto;background:white;border-radius:17px;padding:15px;
+}
+.modal-top{
+ display:flex;justify-content:space-between;
+ align-items:center;gap:10px;margin-bottom:12px;
+}
+.modal-top strong{overflow-wrap:anywhere}
+.preview-area{
+ min-height:150px;background:#f1f2f5;
+ border-radius:12px;display:flex;
+ align-items:center;justify-content:center;overflow:hidden;
+}
+.preview-area img,.preview-area video{
+ display:block;max-width:100%;max-height:65vh;
+ object-fit:contain;
+}
+.preview-area audio{width:95%}
+.modal-actions{display:flex;gap:8px;margin-top:12px}
+.modal-actions button{flex:1}
+@media(max-width:360px){
+ .grid{gap:6px}
+ .tile-info{padding:6px}
+ .tile-actions button{font-size:10px}
+}
 </style>
 </head>
+
 <body>
 <header>
-<div class="logo"><div class="icon">YF</div>Your Files</div>
+ <div class="logo">
+  <div class="logo-icon">YF</div>
+  Your Files
+ </div>
 </header>
+
 <main>
-<div class="actions">
-<button id="add">＋ Add files</button>
-<button class="secondary" id="newcat">＋ Category</button>
-</div>
-<input id="search" placeholder="Search your files...">
-<div class="card">
-<h2>My storage</h2>
-<div id="storage" class="meta">Checking storage...</div>
-</div>
-<div class="categories" id="categories"></div>
-<div class="card">
-<h2 id="heading">All files</h2>
-<div id="filelist"><div class="empty">Your library is empty.<br>Add a file to get started.</div></div>
-</div>
-<footer>
-Your Files stores imported files locally in this browser.
-Export backups regularly. Clearing browser data may erase your library.
-</footer>
+ <div class="actions">
+  <button id="add">＋ Add files</button>
+  <button class="secondary" id="newcat">＋ Category</button>
+ </div>
+
+ <input class="search" id="search" placeholder="Search your files...">
+
+ <div class="card">
+  <h2>My storage</h2>
+  <div id="storage" class="meta">Checking storage...</div>
+ </div>
+
+ <div class="categories" id="categories"></div>
+
+ <div class="card">
+  <div class="library-heading">
+   <h2 id="heading">All files</h2>
+   <div class="view-switch">
+    <button id="gridView" class="active" title="Grid view">▦</button>
+    <button id="listView" title="List view">☰</button>
+   </div>
+  </div>
+  <div id="filelist">
+   <div class="empty">Your library is empty.<br>Add a file to get started.</div>
+  </div>
+ </div>
+
+ <footer>
+  Your Files stores imported files locally in this browser.
+  Imported files are copies; your originals stay unchanged.
+  Export important files regularly. Clearing browser data may erase your library.
+ </footer>
 </main>
 
 <input type="file" id="picker" multiple hidden>
 
-<script>
-const defaults=[
-"Ringtones","Notification tones","Wallpapers",
-"YouTube Shorts","Photos","Videos","Other files"
-];
+<div class="modal" id="previewModal">
+ <div class="modal-box">
+  <div class="modal-top">
+   <strong id="previewName">Preview</strong>
+   <button class="secondary" id="closePreview">Close</button>
+  </div>
+  <div class="preview-area" id="previewArea"></div>
+  <div class="meta" id="previewMeta"></div>
+  <div class="modal-actions">
+   <button id="previewSave">Save file</button>
+  </div>
+ </div>
+</div>
 
-let cats=[...defaults];
-let active="All files";
-let db;
+<script>
+"use strict";
+
+const defaults=[
+ "Ringtones","Notification tones","Wallpapers",
+ "YouTube Shorts","Photos","Videos","Audio","Other files"
+];
 
 const $=id=>document.getElementById(id);
 
+let cats;
+try{
+ cats=JSON.parse(localStorage.getItem("yourFilesCategories"))||[...defaults];
+}catch(e){
+ cats=[...defaults];
+}
+defaults.forEach(c=>{if(!cats.includes(c))cats.push(c)});
+
+let active="All files";
+let db;
+let view="grid";
+let previewURL=null;
+let previewFile=null;
+let thumbnailURLs=[];
+
 function openDB(){
  return new Promise((ok,no)=>{
-  let r=indexedDB.open("YourFilesDB",1);
-  r.onupgradeneeded=()=>{
-   r.result.createObjectStore("files",{keyPath:"id",autoIncrement:true});
+  const request=indexedDB.open("YourFilesDB",1);
+  request.onupgradeneeded=()=>{
+   const database=request.result;
+   if(!database.objectStoreNames.contains("files")){
+    database.createObjectStore("files",{keyPath:"id",autoIncrement:true});
+   }
   };
-  r.onsuccess=()=>ok(r.result);
-  r.onerror=()=>no(r.error);
+  request.onsuccess=()=>ok(request.result);
+  request.onerror=()=>no(request.error);
  });
 }
 
 function all(){
- return new Promise(ok=>{
-  let r=db.transaction("files").objectStore("files").getAll();
-  r.onsuccess=()=>ok(r.result);
+ return new Promise((ok,no)=>{
+  const request=db.transaction("files").objectStore("files").getAll();
+  request.onsuccess=()=>ok(request.result);
+  request.onerror=()=>no(request.error);
  });
 }
 
-function save(f){
- return new Promise(ok=>{
-  let r=db.transaction("files","readwrite")
-   .objectStore("files").add(f);
-  r.onsuccess=ok;
+function saveFile(record){
+ return new Promise((ok,no)=>{
+  const request=db.transaction("files","readwrite")
+   .objectStore("files").add(record);
+  request.onsuccess=()=>ok(request.result);
+  request.onerror=()=>no(request.error);
  });
 }
 
-function remove(id){
- return new Promise(ok=>{
-  let r=db.transaction("files","readwrite")
+function updateFile(record){
+ return new Promise((ok,no)=>{
+  const request=db.transaction("files","readwrite")
+   .objectStore("files").put(record);
+  request.onsuccess=()=>ok();
+  request.onerror=()=>no(request.error);
+ });
+}
+
+function removeFile(id){
+ return new Promise((ok,no)=>{
+  const request=db.transaction("files","readwrite")
    .objectStore("files").delete(id);
-  r.onsuccess=ok;
+  request.onsuccess=()=>ok();
+  request.onerror=()=>no(request.error);
  });
 }
 
@@ -115,148 +304,396 @@ function size(n){
  return (n/1048576).toFixed(1)+" MB";
 }
 
-function category(f){
- if(f.type.startsWith("image/"))return "Photos";
- if(f.type.startsWith("video/"))return "Videos";
+function extension(name){
+ const parts=(name||"").split(".");
+ return parts.length>1?parts.pop().toLowerCase():"";
+}
+
+function detectedType(file){
+ if(file.type)return file.type;
+ const ext=extension(file.name);
+ const types={
+  jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png",
+  gif:"image/gif",webp:"image/webp",bmp:"image/bmp",
+  heic:"image/heic",heif:"image/heif",svg:"image/svg+xml",
+  mp4:"video/mp4",m4v:"video/mp4",mov:"video/quicktime",
+  webm:"video/webm",ogv:"video/ogg",
+  mp3:"audio/mpeg",wav:"audio/wav",m4a:"audio/mp4",
+  aac:"audio/aac",ogg:"audio/ogg",flac:"audio/flac",
+  pdf:"application/pdf"
+ };
+ return types[ext]||"application/octet-stream";
+}
+
+function categoryFor(file){
+ const type=detectedType(file);
+ if(type.startsWith("image/"))return "Photos";
+ if(type.startsWith("video/"))return "Videos";
+ if(type.startsWith("audio/"))return "Audio";
  return "Other files";
+}
+
+function iconFor(file){
+ const type=file.type||"";
+ if(type.startsWith("image/"))return "▧";
+ if(type.startsWith("video/"))return "▶";
+ if(type.startsWith("audio/"))return "♫";
+ if(type==="application/pdf")return "PDF";
+ return "▤";
+}
+
+function makeURL(file){
+ const url=URL.createObjectURL(file.blob);
+ thumbnailURLs.push(url);
+ return url;
+}
+
+function clearThumbnails(){
+ thumbnailURLs.forEach(url=>URL.revokeObjectURL(url));
+ thumbnailURLs=[];
 }
 
 function renderCats(){
  $("categories").innerHTML="";
- ["All files",...cats].forEach(c=>{
-  let b=document.createElement("button");
-  b.className="category"+(c===active?" active":"");
-  b.textContent=c;
-  b.onclick=()=>{
-   active=c;
+ ["All files",...cats].forEach(category=>{
+  const button=document.createElement("button");
+  button.className="category"+(category===active?" active":"");
+  button.textContent=category;
+  button.onclick=()=>{
+   active=category;
    render();
   };
-  $("categories").append(b);
+  $("categories").append(button);
  });
 }
 
-async function render(){
- renderCats();
- let fs=await all();
- let q=$("search").value.toLowerCase();
+function makeThumbnail(file,small=false){
+ const box=document.createElement("div");
+ box.className=small?"list-thumb":"thumb";
 
- fs=fs.filter(f=>
-  (active==="All files"||f.category===active)&&
-  f.name.toLowerCase().includes(q)
- );
+ if(file.type?.startsWith("image/")){
+  const image=document.createElement("img");
+  image.src=makeURL(file);
+  image.alt=file.name;
+  image.loading="lazy";
+  box.append(image);
+ }else if(file.type?.startsWith("video/")){
+  const video=document.createElement("video");
+  video.src=makeURL(file);
+  video.muted=true;
+  video.playsInline=true;
+  video.preload="metadata";
+  video.addEventListener("loadedmetadata",()=>{
+   try{video.currentTime=Math.min(0.2,video.duration||0.2)}catch(e){}
+  },{once:true});
+  box.append(video);
 
- $("heading").textContent=active;
- $("filelist").innerHTML="";
+  if(!small){
+   const mark=document.createElement("span");
+   mark.className="video-mark";
+   mark.textContent="▶ Video";
+   box.append(mark);
+  }
+ }else{
+  const placeholder=document.createElement("span");
+  placeholder.className="thumb-placeholder";
+  placeholder.textContent=iconFor(file);
+  box.append(placeholder);
+ }
+ return box;
+}
 
- if(!fs.length){
-  $("filelist").innerHTML=
-   '<div class="empty">No files found.</div>';
+function makeButton(label,secondary,action){
+ const button=document.createElement("button");
+ button.textContent=label;
+ if(secondary)button.className="secondary";
+ button.onclick=event=>{
+  event.stopPropagation();
+  action();
+ };
+ return button;
+}
+
+function renameFile(file){
+ const oldExtension=extension(file.name);
+ const answer=prompt("Enter a new name:",file.name);
+ if(answer===null)return;
+
+ let newName=answer.trim();
+ if(!newName)return;
+
+ if(oldExtension && !extension(newName)){
+  newName+="."+oldExtension;
  }
 
- fs.forEach(f=>{
-  let row=document.createElement("div");
-  row.className="file";
+ file.name=newName;
+ updateFile(file).then(render).catch(()=>alert("Could not rename this file."));
+}
 
-  let ico=document.createElement("div");
-  ico.className="file-icon";
-  ico.textContent=f.type.startsWith("image/")?"▧":
-   f.type.startsWith("video/")?"▶":
-   f.type.startsWith("audio/")?"♫":"▤";
+function downloadFile(file){
+ const url=URL.createObjectURL(file.blob);
+ const link=document.createElement("a");
+ link.href=url;
+ link.download=file.name;
+ document.body.append(link);
+ link.click();
+ link.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
 
-  let info=document.createElement("div");
+function openPreview(file){
+ closePreview();
+ previewFile=file;
+ previewURL=URL.createObjectURL(file.blob);
+ $("previewName").textContent=file.name;
+ $("previewMeta").textContent=file.category+" · "+size(file.size);
+ $("previewArea").innerHTML="";
+
+ let element;
+ if(file.type?.startsWith("image/")){
+  element=document.createElement("img");
+  element.src=previewURL;
+  element.alt=file.name;
+ }else if(file.type?.startsWith("video/")){
+  element=document.createElement("video");
+  element.src=previewURL;
+  element.controls=true;
+  element.autoplay=true;
+  element.playsInline=true;
+ }else if(file.type?.startsWith("audio/")){
+  element=document.createElement("audio");
+  element.src=previewURL;
+  element.controls=true;
+ }else{
+  const message=document.createElement("div");
+  message.className="empty";
+  message.textContent="Preview isn't available for this file type. You can still save it.";
+  $("previewArea").append(message);
+ }
+ if(element)$("previewArea").append(element);
+ $("previewModal").classList.add("show");
+}
+
+function closePreview(){
+ $("previewModal").classList.remove("show");
+ $("previewArea").innerHTML="";
+ if(previewURL)URL.revokeObjectURL(previewURL);
+ previewURL=null;
+ previewFile=null;
+}
+
+function renderGrid(files){
+ const grid=document.createElement("div");
+ grid.className="grid";
+
+ files.forEach(file=>{
+  const tile=document.createElement("div");
+  tile.className="tile";
+
+  const thumb=makeThumbnail(file);
+  thumb.onclick=()=>openPreview(file);
+  tile.append(thumb);
+
+  const info=document.createElement("div");
+  info.className="tile-info";
+
+  const name=document.createElement("div");
+  name.className="tile-name";
+  name.textContent=file.name;
+  name.title=file.name;
+
+  const meta=document.createElement("div");
+  meta.className="tile-meta";
+  meta.textContent=size(file.size);
+
+  info.append(name,meta);
+  tile.append(info);
+
+  const actions=document.createElement("div");
+  actions.className="tile-actions";
+  actions.append(
+   makeButton("Open",false,()=>openPreview(file)),
+   makeButton("Rename",true,()=>renameFile(file))
+  );
+  tile.append(actions);
+  grid.append(tile);
+ });
+ $("filelist").append(grid);
+}
+
+function renderList(files){
+ const list=document.createElement("div");
+ list.className="list";
+
+ files.forEach(file=>{
+  const row=document.createElement("div");
+  row.className="file-row";
+
+  const thumb=makeThumbnail(file,true);
+  thumb.onclick=()=>openPreview(file);
+
+  const info=document.createElement("div");
   info.className="file-info";
 
-  let name=document.createElement("div");
+  const name=document.createElement("div");
   name.className="file-name";
-  name.textContent=f.name;
+  name.textContent=file.name;
 
-  let meta=document.createElement("div");
+  const meta=document.createElement("div");
   meta.className="meta";
-  meta.textContent=f.category+" · "+size(f.size);
+  meta.textContent=file.category+" · "+size(file.size);
 
   info.append(name,meta);
 
-  let down=document.createElement("button");
-  down.textContent="Save";
-  down.onclick=()=>{
-   let u=URL.createObjectURL(f.blob);
-   let a=document.createElement("a");
-   a.href=u;
-   a.download=f.name;
-   a.click();
-   setTimeout(()=>URL.revokeObjectURL(u),1000);
-  };
+  const actions=document.createElement("div");
+  actions.className="file-actions";
+  actions.append(
+   makeButton("Open",false,()=>openPreview(file)),
+   makeButton("⋯",true,()=>fileMenu(file))
+  );
 
-  let del=document.createElement("button");
-  del.className="secondary";
-  del.textContent="Delete";
-  del.onclick=async()=>{
-   if(confirm("Delete this file?")){
-    await remove(f.id);
-    render();
-   }
-  };
-
-  row.append(ico,info,down,del);
-  $("filelist").append(row);
+  row.append(thumb,info,actions);
+  list.append(row);
  });
+ $("filelist").append(list);
+}
 
+function fileMenu(file){
+ const choice=prompt(
+  "Choose an action:\n1 = Rename\n2 = Save a copy\n3 = Delete"
+ );
+ if(choice==="1")renameFile(file);
+ if(choice==="2")downloadFile(file);
+ if(choice==="3")deleteFile(file);
+}
+
+async function deleteFile(file){
+ if(!confirm("Delete "+file.name+" from Your Files?"))return;
+ await removeFile(file.id);
+ render();
+}
+
+async function updateStorage(){
  if(navigator.storage?.estimate){
-  let e=await navigator.storage.estimate();
-  $("storage").textContent=
-   size(e.usage||0)+" used · "+
-   size(e.quota||0)+" estimated available";
+  try{
+   const estimate=await navigator.storage.estimate();
+   $("storage").textContent=
+    size(estimate.usage||0)+" used · "+
+    size(estimate.quota||0)+" estimated browser storage";
+  }catch(e){
+   $("storage").textContent="Storage information unavailable.";
+  }
+ }else{
+  $("storage").textContent="Storage information unavailable.";
  }
+}
+
+async function render(){
+ clearThumbnails();
+ renderCats();
+
+ let files=await all();
+ const query=$("search").value.toLowerCase();
+
+ files=files.filter(file=>
+  (active==="All files"||file.category===active)&&
+  (file.name||"").toLowerCase().includes(query)
+ );
+
+ files.sort((a,b)=>(b.id||0)-(a.id||0));
+ $("heading").textContent=active;
+ $("filelist").innerHTML="";
+
+ if(!files.length){
+  $("filelist").innerHTML=
+   '<div class="empty">No files found.<br>Try another category or add a file.</div>';
+ }else if(view==="grid"){
+  renderGrid(files);
+ }else{
+  renderList(files);
+ }
+
+ $("gridView").classList.toggle("active",view==="grid");
+ $("listView").classList.toggle("active",view==="list");
+ await updateStorage();
 }
 
 $("add").onclick=()=>$("picker").click();
 
-$("picker").onchange=async e=>{
- for(let f of e.target.files){
-  await save({
-   name:f.name,
-   type:f.type,
-   size:f.size,
-   category:category(f),
-   blob:f.slice(0,f.size,f.type)
-  });
+$("picker").onchange=async event=>{
+ const selected=[...event.target.files];
+ try{
+  for(const file of selected){
+   const type=detectedType(file);
+   await saveFile({
+    name:file.name,
+    type:type,
+    size:file.size,
+    category:categoryFor(file),
+    blob:file.slice(0,file.size,type)
+   });
+  }
+  event.target.value="";
+  await render();
+ }catch(error){
+  alert("Some files could not be added. Your browser may be low on storage.");
  }
- e.target.value="";
- render();
 };
 
 $("newcat").onclick=()=>{
- let c=prompt("Enter category name");
- if(c&&c.trim()&&!cats.includes(c.trim())){
-  cats.push(c.trim());
-  active=c.trim();
-  render();
+ const answer=prompt("Enter a category name:");
+ if(!answer)return;
+ const name=answer.trim();
+ if(!name)return;
+ if(cats.includes(name)){
+  alert("That category already exists.");
+  return;
  }
+ cats.push(name);
+ try{localStorage.setItem("yourFilesCategories",JSON.stringify(cats))}catch(e){}
+ active=name;
+ render();
 };
 
 $("search").oninput=render;
 
+$("gridView").onclick=()=>{
+ view="grid";
+ render();
+};
+$("listView").onclick=()=>{
+ view="list";
+ render();
+};
+
+$("closePreview").onclick=closePreview;
+$("previewModal").onclick=event=>{
+ if(event.target===$("previewModal"))closePreview();
+};
+$("previewSave").onclick=()=>{
+ if(previewFile)downloadFile(previewFile);
+};
+
 async function startApp(){
  try{
   db=await openDB();
-
   if(navigator.storage?.persist){
    await navigator.storage.persist();
   }
-
   await render();
 
   if("serviceWorker" in navigator){
    navigator.serviceWorker.register("./sw.js")
-    .catch(err=>console.log("Service worker:",err));
+    .catch(error=>console.log("Service worker:",error));
   }
- }catch(e){
+ }catch(error){
   $("filelist").textContent=
-   "Storage could not be opened. Try Chrome.";
+   "Storage could not be opened. Try opening Your Files in Chrome.";
  }
 }
 
 startApp();
 </script>
 </body>
-</html>
+ </html>
+ 
